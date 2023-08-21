@@ -1,9 +1,30 @@
 import spacy
-filename="/Users/hagitbenshoshan/Documents/Wellesley/Wellesely/PreProcessing/WordFrequencies_data.csv"
+import re
 import pandas as pd
+
+import nltk
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet 
+from nltk.stem import PorterStemmer, LancasterStemmer
+
+
+
+# Download required resources
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 
 # Load the English pipeline
 nlp = spacy.load("en_core_web_sm")
+
+# Initialize stemmers
+porter = PorterStemmer()
+lancaster = LancasterStemmer() 
+
+filename="/Users/hagitbenshoshan/Documents/Wellesley/Wellesely/PreProcessing/WordFrequencies_data.csv"
+
+
+
 
 def tokenize(text):
     """Tokenize the given text."""
@@ -39,19 +60,6 @@ for lemma, pos in results:
     print(f"Lemmatized: {lemma}, POS: {pos}")
 
 # Same code with NLTK 
-import nltk
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet 
-from nltk.stem import PorterStemmer, LancasterStemmer
-
-# Initialize stemmers
-porter = PorterStemmer()
-lancaster = LancasterStemmer() 
-
-# Download required resources
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
 
 def get_wordnet_pos(treebank_tag):
     """Map treebank POS tag to first character used by WordNetLemmatizer."""
@@ -109,6 +117,9 @@ for index, row in df.iterrows():
     text = row['Team 5']
     if text is None or pd.isnull(text):
         continue 
+    #Clean spcial characters
+    text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
+
     results = lemmatize_and_tag(text)
     results_nltk=lemmatize_and_tag_nltk(text)
     results_stem=stem_and_tag_nltk(text)
@@ -146,4 +157,4 @@ result = df.groupby('word').agg({
 }).rename(columns={'pos': 'Maxpos', 'word': 'wordCount'})
 
 print(result) 
-result.to_csv('agg_result_stem_csv.csv', index=False)
+result.to_csv('agg_result_stem_csv.csv', index=True)
