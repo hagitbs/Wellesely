@@ -6,6 +6,8 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet 
 from nltk.stem import PorterStemmer, LancasterStemmer
+import os
+
 
 
 
@@ -21,7 +23,13 @@ nlp = spacy.load("en_core_web_sm")
 porter = PorterStemmer()
 lancaster = LancasterStemmer() 
 
-filename="/Users/hagitbenshoshan/Documents/Wellesley/Wellesely/PreProcessing/WordFrequencies_data.csv"
+# Get the current working directory
+current_path = os.getcwd()
+print(current_path)
+
+filename = current_path+'/PreProcessing/WordFrequencies_data.csv' 
+print (filename) 
+df = pd.read_csv(filename)
 
 
 
@@ -94,7 +102,8 @@ def stem_and_tag_nltk(text):
 # Stemming with Lancaster Stemmer
 # lancaster_stems = [lancaster.stem(word) for word in words] 
 
-# Sample usage
+# Main usage
+'''
 text = "Apple Inc. is an American multinational technology company headquartered in Cupertino, California."
 
 results = lemmatize_and_tag_nltk(text)
@@ -104,7 +113,7 @@ for lemma, pos in results:
 results = stem_and_tag_nltk(text)
 for stem, pos in results:
     print(f"stemmed: {stem}, POS: {pos}")
-
+'''
 # Read the CSV file
 df = pd.read_csv(filename)
 
@@ -112,9 +121,19 @@ result_spacy_csv = []
 result_nltk_csv  = []
 result_stem_csv  = []
 
+df1=df['Team 1']
+df2=df['Team 2']
+df3=df['Team 3']
+df4=df['Team 4']
+df5=df['Team 5']
+
+s = pd.concat([df1, df2, df3,df4,df5], ignore_index=True)
+df = s.to_frame(name="txt")
+
+print ( df ) 
 # Process each text in the CSV - spacy
-for index, row in df.iterrows():
-    text = row['Team 5']
+for index, row in df.iterrows(): 
+    text = row['txt']
     if text is None or pd.isnull(text):
         continue 
     #Clean spcial characters
@@ -159,8 +178,9 @@ result = df.groupby('word').agg({
 print(result) 
 result.to_csv('agg_result_stem_csv.csv', index=True)
 
+
 # Generate vectors per author 
-result = df.groupby(['word', 'vector']).count() 
+result = df.groupby(['vector', 'word']).count() 
 
 print(result) 
 result.to_csv('agg_vector_stem_csv.csv', index=True)
