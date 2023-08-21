@@ -41,7 +41,12 @@ for lemma, pos in results:
 # Same code with NLTK 
 import nltk
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
+from nltk.corpus import wordnet 
+from nltk.stem import PorterStemmer, LancasterStemmer
+
+# Initialize stemmers
+porter = PorterStemmer()
+lancaster = LancasterStemmer() 
 
 # Download required resources
 nltk.download('punkt')
@@ -70,6 +75,17 @@ def lemmatize_and_tag_nltk(text):
 
     return [(lemmatizer.lemmatize(token, get_wordnet_pos(pos)), pos) for token, pos in pos_tags    if pos in ['NN','NNS', 'JJ'] or pos.startswith("V") ]
 
+
+# Stemming with Porter Stemmer
+def stem_and_tag_nltk(text):
+    tokens = nltk.word_tokenize(text)
+    pos_tags = nltk.pos_tag(tokens)
+
+    return  [(porter.stem(token, get_wordnet_pos(pos)), pos) for token, pos in pos_tags    if pos in ['NN','NNS', 'JJ'] or pos.startswith("V") ] 
+
+# Stemming with Lancaster Stemmer
+# lancaster_stems = [lancaster.stem(word) for word in words] 
+
 # Sample usage
 text = "Apple Inc. is an American multinational technology company headquartered in Cupertino, California."
 
@@ -77,8 +93,16 @@ results = lemmatize_and_tag_nltk(text)
 for lemma, pos in results:
     print(f"Lemmatized: {lemma}, POS: {pos}")
 
+results = stem_and_tag_nltk(text)
+for stem, pos in results:
+    print(f"stemmed: {stem}, POS: {pos}")
+
 # Read the CSV file
 df = pd.read_csv(filename)
+
+result_spacy_csv = []
+result_nltk_csv  = []
+result_stem_csv  = []
 
 # Process each text in the CSV - spacy
 for index, row in df.iterrows():
@@ -87,10 +111,28 @@ for index, row in df.iterrows():
         continue 
     results = lemmatize_and_tag(text)
     results_nltk=lemmatize_and_tag_nltk(text)
+    results_stem=stem_and_tag_nltk(text)
+
     print(f"Text {index + 1}:")
     for lemma, pos in results:
         print(f"Spacy Lemmatized: {lemma}, POS: {pos}")
+        result_spacy_csv.append({"word":lemma,"pos":pos})
     print("\n")
     for lemma, pos in results_nltk:
         print(f"nltk Lemmatized: {lemma}, POS: {pos}")
+        result_nltk_csv.append({"word":lemma,"pos":pos})
     print("\n")
+    for stem, pos in results_stem:
+        print(f"nltk stem: {lemma}, POS: {pos}")
+        result_stem_csv.append({"word":stem,"pos":pos})
+    print("\n")
+ 
+# Convert the result to a DataFrame and save it to a CSV
+df = pd.DataFrame(result_spacy_csv)
+df.to_csv('result_spacy_csv.csv', index=False)
+
+df = pd.DataFrame(result_nltk_csv)
+df.to_csv('result_nltk_csv.csv', index=False)
+
+df = pd.DataFrame(result_stem_csv)
+df.to_csv('result_stem_csv.csv', index=False)
