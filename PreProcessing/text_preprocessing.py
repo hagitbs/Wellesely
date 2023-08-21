@@ -125,8 +125,8 @@ for index, row in df.iterrows():
     for stem, pos in results_stem:
         print(f"nltk stem: {lemma}, POS: {pos}")
         result_stem_csv.append({"word":stem,"pos":pos})
-    print("\n")
- 
+    print("\n") 
+
 # Convert the result to a DataFrame and save it to a CSV
 df = pd.DataFrame(result_spacy_csv)
 df.to_csv('result_spacy_csv.csv', index=False)
@@ -136,3 +136,14 @@ df.to_csv('result_nltk_csv.csv', index=False)
 
 df = pd.DataFrame(result_stem_csv)
 df.to_csv('result_stem_csv.csv', index=False)
+
+ 
+# Group by 'word' column and count 
+
+result = df.groupby('word').agg({
+    'pos': 'max',           # max of 'Value' column
+    'word': 'count'    # count of 'OtherColumn'
+}).rename(columns={'pos': 'Maxpos', 'word': 'wordCount'})
+
+print(result) 
+result.to_csv('agg_result_stem_csv.csv', index=False)
