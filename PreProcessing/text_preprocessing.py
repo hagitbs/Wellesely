@@ -127,15 +127,15 @@ for index, row in df.iterrows():
     print(f"Text {index + 1}:")
     for lemma, pos in results:
         print(f"Spacy Lemmatized: {lemma}, POS: {pos}")
-        result_spacy_csv.append({"word":lemma,"pos":pos})
+        result_spacy_csv.append({"word":lemma,"pos":pos,"vector":index + 1})
     print("\n")
     for lemma, pos in results_nltk:
         print(f"nltk Lemmatized: {lemma}, POS: {pos}")
-        result_nltk_csv.append({"word":lemma,"pos":pos})
+        result_nltk_csv.append({"word":lemma,"pos":pos,"vector":index + 1}) 
     print("\n")
     for stem, pos in results_stem:
         print(f"nltk stem: {lemma}, POS: {pos}")
-        result_stem_csv.append({"word":stem,"pos":pos})
+        result_stem_csv.append({"word":stem,"pos":pos,"vector":index + 1}) 
     print("\n") 
 
 # Convert the result to a DataFrame and save it to a CSV
@@ -149,7 +149,7 @@ df = pd.DataFrame(result_stem_csv)
 df.to_csv('result_stem_csv.csv', index=False)
 
  
-# Group by 'word' column and count 
+# Group by 'word' column and count (DVR)
 
 result = df.groupby('word').agg({
     'pos': 'max',           # max of 'Value' column
@@ -158,3 +158,9 @@ result = df.groupby('word').agg({
 
 print(result) 
 result.to_csv('agg_result_stem_csv.csv', index=True)
+
+# Generate vectors per author 
+result = df.groupby(['word', 'vector']).count() 
+
+print(result) 
+result.to_csv('agg_vector_stem_csv.csv', index=True)
