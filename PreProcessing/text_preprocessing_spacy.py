@@ -160,19 +160,18 @@ result = df.groupby('word').agg({
 }).rename(columns={'pos': 'Maxpos', 'word': 'wordCount'})
 
 dfglobal=result
-print(result) 
-result.to_csv('agg_global.csv', index=True)
+#print(result) 
+#dfglobal.to_csv('agg_global.csv', index=True)
 
 
 # Generate vectors per author 
-result = df.groupby(['vector', 'word']).agg({
+dflocal = df.groupby(['vector', 'word']).agg({
     'pos': 'max',           # max of 'Value' column
     'word': 'count'    # count of 'OtherColumn'
-}).rename(columns={'pos': 'Maxpos', 'word': 'wordCount'})
-dflocal=result
+}).rename(columns={'pos': 'Maxpos', 'word': 'wordCount'}) 
 
-print(dflocal) 
-dflocal.to_csv('agg_local.csv', index=False)
+#print(dflocal) 
+#dflocal.to_csv('agg_local.csv', index=True)
 
 # Calculate Frequencies and distances 
 
@@ -196,11 +195,15 @@ dflocal['percent_of_total'] = (dflocal['wordCount'] / total_sum_by_category) * 1
 #dflocal = dflocal.sort_values(['vector', 'percent_of_total'], ascending=[True])
 
 print(dflocal)
+dflocal.to_csv('agg_local.csv', index=True)
+dfglobal.to_csv('agg_global.csv', index=True)
 
  
 # Merge dflocal and dfglobal to the same CSV file  
- 
-merged_df = pd.merge(dflocal, dfglobal, on='word',   how='outer')
-
+# Join 2 csv's
+df1 = pd.read_csv('agg_local.csv')
+df2 = pd.read_csv('agg_global.csv')
+print (df1)
+merged_df = pd.merge(df1, df2, on='word',   how='outer')
 print(merged_df) 
-merged_df.to_csv('agg_merged.csv', index=True)
+merged_df.to_csv('agg_merged.csv', index=False)
