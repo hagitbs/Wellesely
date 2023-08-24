@@ -1,4 +1,4 @@
-word,POS,wordCount-Chat,percent_of_total-Chat,POS-Chat,wordCount_y,percent_of_total_y,POS-Human,wordCount-Human,percent_of_total-Human
+word,POS,wordCount-Global,percent_of_total-Global,POS-Chat,wordCount-Chat,percent_of_total-Chat,POS-Human,wordCount-Human,percent_of_total-Human
 user,NOUN,28,2.8895768833849327,NOUN,14.0,3.977272727272727,NOUN,14.0,2.26904376012966
 device,NOUN,23,2.3735810113519094,NOUN,15.0,4.261363636363636,NOUN,8.0,1.2965964343598055
 people,NOUN,21,2.1671826625387,NOUN,4.0,1.1363636363636365,NOUN,17.0,2.755267423014587
