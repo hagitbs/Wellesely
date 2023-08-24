@@ -161,7 +161,7 @@ result = df.groupby('word').agg({
 
 dfglobal=result
 print(result) 
-result.to_csv('agg_result_stem_csv.csv', index=True)
+result.to_csv('agg_global.csv', index=True)
 
 
 # Generate vectors per author 
@@ -172,7 +172,7 @@ result = df.groupby(['vector', 'word']).agg({
 dflocal=result
 
 print(dflocal) 
-dflocal.to_csv('agg_vector_stem_csv.csv', index=True)
+dflocal.to_csv('agg_local.csv', index=False)
 
 # Calculate Frequencies and distances 
 
@@ -191,10 +191,9 @@ print(dfglobal)
 total_sum_by_category = dflocal.groupby('vector')['wordCount'].transform('sum')
 
 # Calculate the percent of total within each category
-dflocal['percent_of_total'] = (dflocal['wordCount'] / total_sum_by_category) * 100
-
+dflocal['percent_of_total'] = (dflocal['wordCount'] / total_sum_by_category) * 100 
 # Optionally, sort the DataFrame by 'category' and 'percent_of_total'
-dflocal = dflocal.sort_values(['vector', 'percent_of_total'], ascending=[True, False])
+#dflocal = dflocal.sort_values(['vector', 'percent_of_total'], ascending=[True])
 
 print(dflocal)
 
@@ -204,3 +203,4 @@ print(dflocal)
 merged_df = pd.merge(dflocal, dfglobal, on='word',   how='outer')
 
 print(merged_df) 
+merged_df.to_csv('agg_merged.csv', index=True)
