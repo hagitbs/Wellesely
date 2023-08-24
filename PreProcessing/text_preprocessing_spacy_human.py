@@ -27,7 +27,7 @@ lancaster = LancasterStemmer()
 current_path = os.getcwd()
 print(current_path)
 
-filename = current_path+'/PreProcessing/WordFrequencies_data.csv' 
+filename = current_path+'/PreProcessing/WordFrequencies_data_human.csv' 
 print (filename) 
 df = pd.read_csv(filename)
 
@@ -196,15 +196,15 @@ dflocal['percent_of_total'] = (dflocal['wordCount'] / total_sum_by_category) * 1
 #dflocal = dflocal.sort_values(['vector', 'percent_of_total'], ascending=[True])
 
 print(dflocal)
-dflocal.to_csv('agg_local.csv', index=True)
-dfglobal.to_csv('agg_global.csv', index=True)
+dflocal.to_csv('agg_local_human.csv', index=True)
+dfglobal.to_csv('agg_global_human.csv', index=True)
 
  
 # Merge dflocal and dfglobal to the same CSV file  
 # Join 2 csv's
-df1 = pd.read_csv('agg_local.csv')
-df2 = pd.read_csv('agg_global.csv')
+df1 = pd.read_csv('agg_local_human.csv')
+df2 = pd.read_csv('agg_global_human.csv')
 print (df1)
 merged_df = pd.merge(df1, df2, on='word',   how='outer')
 print(merged_df) 
-merged_df.to_csv('agg_merged.csv', index=False)
+merged_df.to_csv('agg_merged_human.csv', index=False)

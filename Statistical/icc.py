@@ -1,17 +1,18 @@
 #pip install pingouin
-import pingouin as pg
-import re
 import pandas as pd
+import pingouin as pg
 
-# Sample data
+# Create a sample DataFrame
 data = {
-    'Rater1': [2, 3, 4, 5, 4],
-    'Rater2': [3, 2, 4, 5, 6],
-    'Rater3': [2, 3, 5, 4, 4]
+    'Rater': ['R1', 'R1', 'R1', 'R2', 'R2', 'R2', 'R3', 'R3', 'R3'],
+    'Subject': ['S1', 'S2', 'S3', 'S1', 'S2', 'S3', 'S1', 'S2', 'S3'],
+    'Score': [8, 2, 6, 7, 3, 5, 9, 2, 7]
 }
 
 df = pd.DataFrame(data)
-print ( df )
-# Calculate ICC
-icc_data = pg.intraclass_corr(data=df, targets='Item', raters='Rater', ratings='Ratings',nan_policy='omit').round(3)
-print(icc_data)
+print (df) 
+# Compute intraclass correlation
+icc_df = pg.intraclass_corr(data=df, targets='Subject', raters='Rater', ratings='Score')
+
+# Print the ICC results
+print(icc_df)
