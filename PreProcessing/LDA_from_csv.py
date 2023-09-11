@@ -15,12 +15,17 @@ import os
 current_path = os.getcwd()
 print(current_path)
 
-filename = current_path+'/PreProcessing/WordFrequencies_data_human.csv' 
-print (filename) 
-df = pd.read_csv(filename)
+# Read text data from two CSV files
+# Assume both CSV files have a column named 'text'
+csv_file_path1 = current_path+'/PreProcessing/WordFrequencies_data_chat.csv' 
+csv_file_path2 = current_path+'/PreProcessing/WordFrequencies_data_human.csv' 
 
+df1 = pd.read_csv(csv_file_path1)
+df2 = pd.read_csv(csv_file_path2)
 
- 
+# Concatenate the DataFrames
+df = pd.concat([df1, df2]).reset_index(drop=True)
+  
 
 # Pre-processing the texts
 def preprocess(document):
@@ -62,10 +67,34 @@ dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(text) for text in texts]
 
 # Apply LDA
-NUM_TOPICS = 20
+# The passes parameter controls how often we train the model on the entire corpus
+NUM_TOPICS = 6
 lda_model = gensim.models.LdaModel(corpus, num_topics=NUM_TOPICS, id2word=dictionary, passes=15)
+topic_data = []
 
 # Print topics and words associated with it
-topics = lda_model.print_topics(num_words=5)
+topics = lda_model.print_topics(num_words=8)
 for topic in topics:
-    print(topic) 
+    topic_id, words_probs = topic
+    words_probs = words_probs.split(" + ")
+    words_probs = {word.split("*")[1].strip('"'): float(word.split("*")[0]) for word in words_probs}
+    topic_data.append({'TopicID': topic_id, **words_probs})
+
+# Convert to DataFrame
+topics_df = pd.DataFrame(topic_data) 
+# If you want to reset the index for better readability
+topics_df.reset_index(inplace=True)
+
+print(topics_df)
+
+topics_df.to_csv('topics_all.csv', index=True) 
+# Pivot the DataFrame to have TopicID as columns and words as index
+pivoted_topics_df = topics_df.melt(id_vars=['TopicID'], var_name='Word', value_name='Probability')
+pivoted_topics_df = pivoted_topics_df.pivot(index='Word', columns='TopicID', values='Probability')
+
+# If you want to reset the index for better readability
+pivoted_topics_df.reset_index(inplace=True)
+
+print(pivoted_topics_df)
+
+pivoted_topics_df.to_csv('topics_all_pivotted.csv', index=True)
