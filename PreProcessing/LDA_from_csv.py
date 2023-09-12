@@ -18,8 +18,8 @@ print(current_path)
 # Read text data from two CSV files
 # Assume both CSV files have a column named 'text'
 csv_file_path1 = current_path+'/PreProcessing/WordFrequencies_data_chat.csv' 
-csv_file_path2 = current_path+'/PreProcessing/WordFrequencies_data_human.csv' 
-
+#csv_file_path2 = current_path+'/PreProcessing/WordFrequencies_data_human.csv' 
+csv_file_path2 = current_path+'/PreProcessing/WordFrequencies_data_empty.csv' 
 df1 = pd.read_csv(csv_file_path1)
 df2 = pd.read_csv(csv_file_path2)
 
@@ -70,6 +70,22 @@ corpus = [dictionary.doc2bow(text) for text in texts]
 # The passes parameter controls how often we train the model on the entire corpus
 NUM_TOPICS = 6
 lda_model = gensim.models.LdaModel(corpus, num_topics=NUM_TOPICS, id2word=dictionary, passes=15)
+
+import pyLDAvis
+import pyLDAvis.gensim_models as gensimvis
+from ipywidgets import interactive
+import matplotlib.pyplot as plt
+# Prepare the visualization data
+vis_data = gensimvis.prepare(lda_model, corpus, dictionary)
+
+# Visualize the topics
+pyLDAvis.display(vis_data)
+pyLDAvis.save_html(vis_data, 'lda_visualization_chat.html')
+
+# wordcloud 
+
+
+
 topic_data = []
 
 # Print topics and words associated with it
