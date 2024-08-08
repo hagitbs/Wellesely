@@ -12,7 +12,8 @@ documents = [
     "Artificial intelligence is creating a revolution in the tech industry.",
     "Machine learning is an approach to achieve artificial intelligence.",
     "Deep learning algorithms require large datasets and significant amounts of compute power.", 
-    "Alice just woked up in the morning in wonderland with fairies"
+    "Alice just woked up in the morning in wonderland with fairies",
+    "bag that uses bag bag bag sensor to alert you if something you took out wasn't placed back in after its been closed to prevent loss"
 
 ]
 
@@ -21,6 +22,7 @@ def preprocess(document):
     stop_words = set(stopwords.words('english'))
     words = word_tokenize(document.lower())
     words_cleaned = [word for word in words if word not in stop_words and word not in string.punctuation]
+    print(words_cleaned)
     return words_cleaned
 
 texts = [preprocess(document) for document in documents]

@@ -27,7 +27,7 @@ lancaster = LancasterStemmer()
 current_path = os.getcwd()
 print(current_path)
 
-filename = current_path+'/PreProcessing/WordFrequencies_data.csv' 
+filename = current_path+'/Wellesely/PreProcessing/WordFrequencies_data.csv' 
 print (filename) 
 df = pd.read_csv(filename)
 
@@ -157,10 +157,19 @@ df.to_csv('result_spacy_csv.csv', index=False)
 
 result = df.groupby('word').agg({
     'pos': 'max',           # max of 'Value' column
-    'word': 'count'    # count of 'OtherColumn'
+    'word': 'count'         # count of 'OtherColumn'
 }).rename(columns={'pos': 'Maxpos', 'word': 'wordCount'})
 
+
 dfglobal=result
+
+print  ( dfglobal['wordCount'] )
+
+print  ( dfglobal['wordCount'].sum())
+print  ( dfglobal['wordCount'].count())
+print  ( dfglobal['wordCount'].max())
+print  ( dfglobal['wordCount'].min())
+
 #print(result) 
 #dfglobal.to_csv('agg_global.csv', index=True)
 
@@ -168,7 +177,7 @@ dfglobal=result
 # Generate vectors per author 
 dflocal = df.groupby(['vector', 'word']).agg({
     'pos': 'max',           # max of 'Value' column
-    'word': 'count'    # count of 'OtherColumn'
+    'word': 'count'         # count of 'OtherColumn'
 }).rename(columns={'pos': 'Maxpos', 'word': 'wordCount'}) 
 
 #print(dflocal) 
@@ -180,7 +189,7 @@ dflocal = df.groupby(['vector', 'word']).agg({
 total_sum = dfglobal['wordCount'].sum()
 
 # Calculate the percentage of the total for each value (Global)
-dfglobal['percent_of_total'] = (dfglobal['wordCount'] / total_sum) * 100
+dfglobal['percent_of_total'] = (dfglobal['wordCount'] / total_sum) 
 
 dfglobal = dfglobal.sort_values('percent_of_total', ascending=False)
 
@@ -191,7 +200,7 @@ print(dfglobal)
 total_sum_by_category = dflocal.groupby('vector')['wordCount'].transform('sum')
 
 # Calculate the percent of total within each category
-dflocal['percent_of_total'] = (dflocal['wordCount'] / total_sum_by_category) * 100 
+dflocal['percent_of_total'] = (dflocal['wordCount'] / total_sum_by_category)  
 # Optionally, sort the DataFrame by 'category' and 'percent_of_total'
 #dflocal = dflocal.sort_values(['vector', 'percent_of_total'], ascending=[True])
 

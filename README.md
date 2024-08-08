@@ -4,6 +4,10 @@ python -m spacy download en_core_web_sm
 pip install nltk
 pip install pandas
 pip install pingouin
+pip install pyLDAvis
+pip install wordcloud
+
+ 
 
 
 Run Order : 
