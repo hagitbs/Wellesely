@@ -6,9 +6,11 @@ from nltk.corpus import stopwords
 import string
 import spacy
 import re
-
 import os
-
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+import numpy as np
+import random
 # Read text data from CSV file
 # Assume that the CSV file has a column named 'text'
 # Get the current working directory
@@ -18,7 +20,7 @@ print(current_path)
 # Read text data from two CSV files
 # Assume both CSV files have a column named 'text'
 csv_file_path1 = current_path+'/PreProcessing/WordFrequencies_data_chat.csv' 
-#csv_file_path2 = current_path+'/PreProcessing/WordFrequencies_data_human.csv' 
+#csv_file_path1 = current_path+'/PreProcessing/WordFrequencies_data_human.csv' 
 csv_file_path2 = current_path+'/PreProcessing/WordFrequencies_data_empty.csv' 
 df1 = pd.read_csv(csv_file_path1)
 df2 = pd.read_csv(csv_file_path2)
@@ -83,7 +85,33 @@ pyLDAvis.display(vis_data)
 pyLDAvis.save_html(vis_data, 'lda_visualization_chat.html')
 
 # wordcloud 
+def my_color_func(word, font_size, position, orientation, random_state=None, **kwargs):
+    return "hsl(220, 100%%, %d%%)" % random.randint(40, 100)
 
+ 
+
+# Generate WordCloud for each topic
+for t in range(lda_model.num_topics):
+    plt.figure()
+    
+    # Prepare data
+    terms = lda_model.show_topic(t, 20)
+    term_dict = {}
+    for term, freq in terms:
+        term_dict[term] = np.round(freq, 4)
+    
+    # Generate WordCloud
+    wordcloud = WordCloud(background_color='white',
+                          width=800,
+                          height=800,
+                          color_func=my_color_func,
+                         ).generate_from_frequencies(term_dict)
+    
+    # Display WordCloud
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis("off")
+    #plt.title(f'Topic #{t+1}')
+    plt.show()
 
 
 topic_data = []
@@ -91,6 +119,7 @@ topic_data = []
 # Print topics and words associated with it
 topics = lda_model.print_topics(num_words=8)
 for topic in topics:
+    print('***',topic)
     topic_id, words_probs = topic
     words_probs = words_probs.split(" + ")
     words_probs = {word.split("*")[1].strip('"'): float(word.split("*")[0]) for word in words_probs}
@@ -103,7 +132,7 @@ topics_df.reset_index(inplace=True)
 
 print(topics_df)
 
-topics_df.to_csv('topics_all.csv', index=True) 
+topics_df.to_csv('topics_h.csv', index=True) 
 # Pivot the DataFrame to have TopicID as columns and words as index
 pivoted_topics_df = topics_df.melt(id_vars=['TopicID'], var_name='Word', value_name='Probability')
 pivoted_topics_df = pivoted_topics_df.pivot(index='Word', columns='TopicID', values='Probability')
@@ -113,4 +142,4 @@ pivoted_topics_df.reset_index(inplace=True)
 
 print(pivoted_topics_df)
 
-pivoted_topics_df.to_csv('topics_all_pivotted.csv', index=True)
+pivoted_topics_df.to_csv('topics_h_pivotted.csv', index=True)
